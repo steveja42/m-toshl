@@ -1,0 +1,9 @@
+
+
+{
+
+	"rules": {
+	  "no-constant-condition": true,
+	  "no-unexpected-multiline": true
+	}
+ }
