@@ -1,3 +1,6 @@
 jsconfig.json
 **/node_modules/**
 bblog.js
+notused\notusedcode.ts
+sample.html
+

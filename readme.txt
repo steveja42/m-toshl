@@ -1,3 +1,9 @@
+todo:
+log spreadsheet name in makesheet
+log only first time opened - less logging
+get verified by google- ip
+add feedback link-   https://resultify.live/optionswhatif/feedback
+
 
 npm install -g @google/clasp
 clasp clone <script id>
@@ -7,13 +13,19 @@ make .claspignore
 	**/node_modules/**
 clasp push --watch
 
-
+ style="width: 150px;"
 issues:
-wide auth
+
 	
 solved
 call/put tempates need more rows - 800
 show needs to check input
+wide auth
+
+https://www.googleapis.com/auth/script.container.ui
+https://www.googleapis.com/auth/script.external_request
+https://www.googleapis.com/auth/spreadsheets.currentonly
+https://www.googleapis.com/auth/userinfo.email
 
 // The code below gets the values for the range C2:G8
 // in the active spreadsheet.  Note that this is a JavaScript array.

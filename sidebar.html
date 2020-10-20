@@ -42,40 +42,95 @@
 </head>
 
 <body>
+	<div class="sidebar branding-below">
+		<form>
+			<div class="block">
+				<label for="symbol">Enter a stock symbol</label>
+				<input type="text" id="symbol" autofocus spellcheck="false">
+			</div>
+			<div class="block">
+				<label for="optionType">Select the option type</label>
+				<select id="optionType" size="2">
+					<option selected>PUT</option>
+					<option>CALL</option>
+				</select>
+			</div>
+			<div class="block">
+				<label for="dates">Select desired option dates (ctrl + click)</label>
+				<select id="dates" multiple size="10">
+				</select>
+			</div>
+			<button class="blue" type=submit id="createsheet">Make options sheet</button>
+		</form>
+		<p>---------------</p>
+		<button class="blue" id="updatePrices">Update prices</button>
 
-	<div class="inline form-group">
-		<label for="symbol">Symbol</label>
-		<input type="text" id="symbol" style="width: 150px;">
+		<div id="errorplace"></div>
+		<p></p>
+		<p><a href="https://optionswhatif.com/feedback" target="_blank">Give feedback</a> (Bug reports/Feature requests/Contributions)</p>
 	</div>
 
-	<div class="block form-group">
-		<label for="optionType">Select</label>
-		<select id="optionType">
-			<option selected>PUT</option>
-			<option>CALL</option>
-		</select>
+	<div class="sidebar bottom">
+		<img alt="Add-on logo" class="logo"
+			src="http://d2f0ora2gkri0g.cloudfront.net/5f/ab/5fabf7e1-f53e-4163-802d-0bac8d0123cb.png" width="27"
+			height="27">
+
+		<span class="gray branding-text">OptionsWhatif by Resultify </span>
 	</div>
-
-	<select id="dates" multiple>
-
-	</select>
-
-	<button class="action" id="createsheet">Create Options Sheet</button>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script>
 		/**
-		 * On document load, assign click handlers to each button and try to load the
-		 * user's origin and destination language preferences if previously set.
+		 * On load, assign click handlers to each button 
 		 */
 		$(function () {
 			$('#createsheet').click(runCreateSheet);
+			$('#updatePrices').click(runrefreshPrices);
 			$('#symbol').change(runSymbolChanged);
+			document.querySelector("#symbol").addEventListener("keyup", event => {
+				if (event.key !== "Enter") return; // Use `.key` instead.
+				runSymbolChanged() //document.querySelector("#linkadd").click(); // Things you want to do.
+				event.preventDefault(); // No need to `return false;`.
+			});
+
 		});
+
+		function runrefreshPrices() {
+			this.disabled = true;
+
+			$('#error').remove()
+			google.script.run
+				.withSuccessHandler((x, element) => element.disabled = false)
+				.withFailureHandler((msg, element) => {
+					showError(msg, $('#errorplace'))
+					element.disabled = false
+				})
+				.withUserObject(this)
+				.refreshPrices()
+		}
 
 		function runSymbolChanged() {
 
-			console.log("symbol changed")
+			$('#error').remove()
+			$('#dates').empty()
+			if ($('#symbol').val() == "")
+				return false
+			google.script.run
+				.withSuccessHandler(
+					function (values) {
+						$.each(values, function (index, value) {
+							$('#dates')
+								.append($("<option></option>")
+									.attr("value", value)
+									.text(value));
+						});
+					})
+				.withFailureHandler(
+					function (msg, element) {
+						showError(msg, $('#errorplace'));
+					})
+				.withUserObject(this)
+				.getOptionDates($('#symbol').val());
 		}
 
 
@@ -83,37 +138,33 @@
 				* Runs a server-side function to 
 				*/
 		function runCreateSheet() {
+			if ($('#symbol').is(":focus")) {
+				return false
+			}
 			this.disabled = true;
+			$('#updatePrices').prop("disabled", true)
+			
 			$('#error').remove();
+
+			var symbol = $('#symbol').val();
 			var dates = $('#dates').val();
 			var optionType = $('#optionType').val();
 
 			//var savePrefs = $('#save-prefs').is(':checked');
 			google.script.run
 				.withSuccessHandler(
-					function (textAndTranslation, element) {
-						$('#translated-text').val(textAndTranslation.translation);
+					function (x, element) {
 						element.disabled = false;
+						$('#updatePrices').prop("disabled", false)
 					})
 				.withFailureHandler(
 					function (msg, element) {
-						showError(msg, $('#button-bar'));
+						showError(msg, $('#errorplace'));
 						element.disabled = false;
+						$('#updatePrices').prop("disabled", false)
 					})
 				.withUserObject(this)
-				.getTextAndTranslation(origin, dest, savePrefs);
-		}
-
-
-		google.script.run.withSuccessHandler(onSuccess).ExampleArray();
-
-		function onSuccess(values) {
-			$.each(values, function (key, value) {
-				$('#dates')
-					.append($("<option></option>")
-						.attr("value", key)
-						.text(value));
-			});
+				.makeSheet(symbol, optionType, dates);
 		}
 
 		/**

@@ -1,6 +1,6 @@
 var td = {
 
-	tdClientId: 'GOLDEN@AMER.OAUTHAP',
+	tdClientId: 'SIRSNEEZ2@AMER.OAUTHAP',
 
 	/**
 	 * makes a call to the API represented by url, with no oauth2 authorization.

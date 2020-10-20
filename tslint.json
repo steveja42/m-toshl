@@ -1,9 +1,9 @@
-
-
 {
-
-	"rules": {
-	  "no-constant-condition": true,
-	  "no-unexpected-multiline": true
-	}
- }
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {},
+    "rulesDirectory": []
+}

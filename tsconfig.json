@@ -19,6 +19,6 @@
 		 ]
 	},
 	"include": [
-		 "src/*"
+		 "src/*", "notused/notusedcode.ts"
 	]
 }
