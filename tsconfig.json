@@ -19,6 +19,7 @@
 		 ]
 	},
 	"include": [
-		 "src/*", "notused/notusedcode.ts"
+		 "src/*", "notused/notusedcode.ts",
+		 ".eslintrc.js"
 	]
 }
