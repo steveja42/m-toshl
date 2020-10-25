@@ -12,8 +12,19 @@
 			"label": "clasp push",
 			"type": "shell",
 			"command": "clasp push --watch",
-			"runOptions": {"runOn":"folderOpen"},
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
 			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "lint",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"label": "npm: lint",
+			"detail": "eslint -c .eslintrc.js --ext .ts src"
 		}
 	]
 }
