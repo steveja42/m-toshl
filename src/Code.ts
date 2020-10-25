@@ -9,11 +9,11 @@ function test3() {
 
 function test2() {
   log('test called');
-  var ss = SpreadsheetApp.getActive();
+  const ss = SpreadsheetApp.getActive();
   let label = 'insert'
   console.time(label)
 
-  var sheet = ss.insertSheet()
+  const sheet = ss.insertSheet()
   console.timeEnd(label)
   label = 'copy'
   console.time(label)
@@ -22,15 +22,15 @@ function test2() {
   console.timeEnd(label)
 
   return
-  var namedRanges = SpreadsheetApp.getActiveSpreadsheet().getNamedRanges();
-  for (let nr of namedRanges) {
+  const namedRanges = SpreadsheetApp.getActiveSpreadsheet().getNamedRanges();
+  for (const nr of namedRanges) {
     log(`${nr.getName()} - ${nr.getRange().getA1Notation()}`)
   }
 }
 function test() {
-  let label = 'makeputTemplate'
-  let sheetName = 'test'
-  var ss = SpreadsheetApp.getActive();
+  const label = 'makeputTemplate'
+  const sheetName = 'test'
+  const ss = SpreadsheetApp.getActive();
   let sheet = ss.getSheetByName(sheetName);
   if (sheet)
     ss.deleteSheet(sheet)
@@ -52,17 +52,17 @@ function test() {
 function onOpen(e) {
 
   let ssName = '';
-  if (e.authMode != ScriptApp.AuthMode.NONE)
+  if (e.authMode !== ScriptApp.AuthMode.NONE)
     ssName = SpreadsheetApp.getActive().getName()
-  //log(`on open version ${version} authmode ${e.authMode} : ${ssName}`);
+  // log(`on open version ${version} authmode ${e.authMode} : ${ssName}`);
 
   SpreadsheetApp.getUi().createAddonMenu()
     .addItem('Start', 'showSidebar')
-    //.addItem('TEST', 'test')
+    // .addItem('TEST', 'test')
     .addToUi();
 
 
-  if (e.authMode == ScriptApp.AuthMode.NONE) //addon not enabled for this document   AuthMode.LIMITED
+  if (e.authMode === ScriptApp.AuthMode.NONE) // addon not enabled for this document   AuthMode.LIMITED
     return
 }
 
@@ -72,7 +72,7 @@ function onOpen(e) {
  * the mobile add-on version.
  */
 function showSidebar() {
-  var ui = HtmlService.createHtmlOutputFromFile('sidebar')
+  const ui = HtmlService.createHtmlOutputFromFile('sidebar')
     .setTitle(appTitle);
 
   SpreadsheetApp.getUi().showSidebar(ui);
@@ -81,7 +81,7 @@ function showSidebar() {
 
 /**
  * Called by the sidebar to make a new option sheet
- * 
+ *
  */
 function makeSheet(symbol, optionType, optionDates) {
 
@@ -91,10 +91,10 @@ function makeSheet(symbol, optionType, optionDates) {
     throw new Error(`Symbol not entered`)
   if (!optionDates || optionDates.length < 1)
     throw new Error(`Choose at least one option expiration date.`)
-  let startTime = new Date();
-  let os = new OptionSheet(<string>symbol.toUpperCase(), <optionType>optionType, optionDates);
+  const startTime = new Date();
+  const os = new OptionSheet(symbol.toUpperCase() as string, optionType as optionType, optionDates);
   SpreadsheetApp.setActiveSheet(os.sheet)
-  var userProperties = PropertiesService.getUserProperties()
+  const userProperties = PropertiesService.getUserProperties()
   let sheetsMadeCount = Number(userProperties.getProperty('sheetsMadeCount'))
   if (sheetsMadeCount) {
     sheetsMadeCount = sheetsMadeCount + 1
@@ -107,14 +107,14 @@ function makeSheet(symbol, optionType, optionDates) {
 
 /**
  * Called by the sidebar to get the option expiration dates for a stock symbol
- * 
+ *
  */
 function getOptionDates(symbol) {
-  let dates = tdApi.getOptionDates(symbol.toUpperCase());
+  const dates = tdApi.getOptionDates(symbol.toUpperCase());
   if (!dates) {
     throw new Error(`Option Chain not found for symbol: ${symbol}`)
   }
-  //log(dates);
+  // log(dates);
   return dates;
 }
 

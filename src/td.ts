@@ -1,4 +1,4 @@
-var td = {
+let td = {
 
 	tdClientId: 'SIRSNEEZ2@AMER.OAUTHAP',
 
@@ -9,14 +9,15 @@ var td = {
 	 * @return response in JSON
 	 */
 	callTDAPI(url) {
-		var options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+		const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
 			method: 'get',
 			muteHttpExceptions: true,
 		};
+		let response
 		url += `&apikey=${encodeURIComponent(td.tdClientId)}`;
 
 		try {
-			var response = UrlFetchApp.fetch(url, options);
+			response = UrlFetchApp.fetch(url, options);
 			if (!responseOK(response)) {
 				log(`request failed with code:${response.getResponseCode()} ${response.getContentText()}`);
 				return null;
@@ -33,6 +34,6 @@ var td = {
 }
 
 function responseOK(response) {
-	var code = response.getResponseCode();
+	const code = response.getResponseCode();
 	return (code >= 200 && code <= 299);
 }
