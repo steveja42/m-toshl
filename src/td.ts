@@ -1,4 +1,4 @@
-let td = {
+const td = {
 
 	tdClientId: 'SIRSNEEZ2@AMER.OAUTHAP',
 

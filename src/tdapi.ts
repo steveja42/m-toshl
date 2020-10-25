@@ -1,4 +1,4 @@
-let tdApi = {
+const tdApi = {
 
 	/**
 	 * makes a call to the API represented by url, with no oauth2 authorization.

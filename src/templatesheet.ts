@@ -1,7 +1,7 @@
 
 const numColumns = 23
 
-let templates = [
+const templates = [
 	{
 		name: 'putTemplate',
 		headers: [["Strike Price", "Expiration Date / Last Quote Time", "Last", "Chg", "Bid", "Ask", "Vol", "Open Interest", "Price", "Break Even", "If Price Drops →", "=LastPrice* (1-M1)", 0.1, "=LastPrice* (1-O1)", 0.33, "=LastPrice* (1-Q1)", 0.5, "=LastPrice* (1-S1)", 0.66, "=LastPrice* (1-U1)", 0.9, "=LastPrice* (1-W1)", 1], ["", "", 100, "", "", "", "", "", "", "", "", "Profit", "ROI", "Profit", "ROI", "Profit", "ROI", "Profit", "ROI", "Profit", "ROI", "Profit", "ROI"]]
