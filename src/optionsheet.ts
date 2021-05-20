@@ -82,7 +82,7 @@ class OptionSheet {
 		// Quote Time in Long last quote time in milliseconds since Epoch -The Unix epoch (or Unix time or POSIX time or Unix timestamp) is the number of seconds that have elapsed since January 1, 1970 (midnight UTC/GMT)
 		// 	Math.floor(new Date().getTime()/1000.0) getTime() returns time in milliseconds.
 		for (const date of this.optionDates) {
-			const dateKey = Object.keys(expDates).find(el => el.slice(0, 9).localeCompare(date.slice(0, 9)) === 0);  // should be slice(0,10)??
+			const dateKey = Object.keys(expDates).find(el => el.slice(0, 10).localeCompare(date.slice(0, 10)) === 0);  
 			if (!dateKey) {
 				values.push(['', `expiration date ${date} not found`, '', '', '', '', '', '',]);
 				rowsToFormat.push(iRow++);

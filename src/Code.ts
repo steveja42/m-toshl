@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /** @OnlyCurrentDoc */
 
-const version = 31;
+const version = 33;
 const appTitle = 'OptionsWhatIf'
 
 function test3() {
