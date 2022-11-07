@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /** @OnlyCurrentDoc */
 
-const version = 33;
+const version = 35;
 const appTitle = 'OptionsWhatIf'
 
 function test3() {
@@ -86,7 +86,7 @@ function showSidebar() {
  */
 function makeSheet(symbol, optionType, optionDates) {
 
-  log(`makeSheet-start ${symbol} : ${optionType} : ${optionDates}`)
+  //log(`makeSheet-start ${symbol} : ${optionType} : ${optionDates}`)
 
   if (!symbol)
     throw new Error(`Symbol not entered`)
@@ -102,7 +102,7 @@ function makeSheet(symbol, optionType, optionDates) {
   }
   else
     sheetsMadeCount = 1
-  log(`-------- makesheet made sheet # ${sheetsMadeCount} (in ${(new Date()).getTime() - startTime.getTime()} secs) ${symbol} : ${optionType} : ${optionDates}`)
+  log(`-------- makesheet made sheet # ${sheetsMadeCount} (in ${(new Date()).getTime() - startTime.getTime()} msecs) ${symbol} : ${optionType} : ${optionDates}`)
   userProperties.setProperty('sheetsMadeCount', sheetsMadeCount.toString())
 }
 

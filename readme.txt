@@ -1,3 +1,14 @@
+Test
+ 1. go to https://script.google.com/home/projects/1cK_5DahOhYaomdxQ_xn9WvWoD1noKykrQCa-x9IVgVwHgIvlN9FxHl27/edit
+ 2. deploy-> test deployments-> execute
+ 
+Publish
+1. Create new deployment version
+2. go to https://console.cloud.google.com/apis/api/appsmarket-component.googleapis.com/googleapps_sdk?project=project-id-7012436840793518902&authuser=0
+3. update version number
+
+
+
 todo:
 log spreadsheet name in makesheet
 log only first time opened - less logging

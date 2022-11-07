@@ -9,6 +9,8 @@ function refreshPrices() {
 
 	const os = OptionSheet.fromExistingSheet(SpreadsheetApp.getActive().getActiveSheet());
 	if (os) {
+		const startTime = new Date();
+
 		os.sheet.getRange(OptionSheet.rowStartData, OptionSheet.columnStartData, os.sheet.getMaxRows(), OptionSheet.numColumns).clearContent()
 		os.sheet.getRange(OptionSheet.rowStartData, OptionSheet.columnStartData, os.sheet.getMaxRows(), OptionSheet.numColumns).clearFormat()
 
@@ -20,7 +22,7 @@ function refreshPrices() {
 		}
 		else
 		  sheetsRefeshedCount = 1
-		log(`------ refreshPrices refresh # ${sheetsRefeshedCount}`)
+		log(`------ refreshPrices refresh # ${sheetsRefeshedCount} ${os.sheet.getSheetName()} (${(new Date()).getTime() - startTime.getTime()} msecs)`)
 		userProperties.setProperty('sheetsRefeshedCount', sheetsRefeshedCount.toString())
 		// log(`refreshPrices: ${os.symbol} : ${this.type} : ${this.optionDates}`)
 
@@ -93,7 +95,7 @@ class OptionSheet {
 				// var addedDate = sheet.getRange(1,1).getValue();
 				  // var addedTime = Utilities.formatDate(addedDate, SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "hh:mm a");  "GMT-8"
 				const tz = SpreadsheetApp.getActive().getSpreadsheetTimeZone()
-				log(`------ writeValues timezone for ss ${SpreadsheetApp.getActive()} is  ${tz? tz:"null"}`)
+				//log(`------ writeValues timezone for ss ${SpreadsheetApp.getActive()} is  ${tz? tz:"null"}`)
 				const data = Object.entries(expDates[dateKey]).map(([strike, value]) => [strike, Utilities.formatDate(new Date(value[0].quoteTimeInLong), tz, "MMM-dd' 'HH:mm:ss"), value[0].last, value[0].markChange, value[0].bid, value[0].ask, value[0].totalVolume, value[0].openInterest]);
 				iRow += data.length;
 				values = values.concat(data);
@@ -105,7 +107,7 @@ class OptionSheet {
 				.setFontWeight("bold")
 				.setFontSize(12);
 		}
-		log(`writeValues: (${(new Date()).getTime() - startTime.getTime()} secs) : ${this.symbol} ${this.type} : ${this.optionDates}`)
+		//log(`writeValues: (${(new Date()).getTime() - startTime.getTime()} msecs) : ${this.symbol} ${this.type} : ${this.optionDates}`)
 
 	}
 
