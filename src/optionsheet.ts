@@ -18,11 +18,11 @@ function refreshPrices() {
 		const userProperties = PropertiesService.getUserProperties()
 		let sheetsRefeshedCount = Number(userProperties.getProperty('sheetsRefeshedCount'))
 		if (sheetsRefeshedCount) {
-		  sheetsRefeshedCount = sheetsRefeshedCount + 1
+			sheetsRefeshedCount = sheetsRefeshedCount + 1
 		}
 		else
-		  sheetsRefeshedCount = 1
-		log(`------ refreshPrices refresh # ${sheetsRefeshedCount} ${os.sheet.getSheetName()} (${(new Date()).getTime() - startTime.getTime()} msecs)`)
+			sheetsRefeshedCount = 1
+		log(`---🧿 refresh # ${sheetsRefeshedCount} ${os.sheet.getSheetName()} (${(new Date()).getTime() - startTime.getTime()} msecs)`)
 		userProperties.setProperty('sheetsRefeshedCount', sheetsRefeshedCount.toString())
 		// log(`refreshPrices: ${os.symbol} : ${this.type} : ${this.optionDates}`)
 
@@ -42,11 +42,12 @@ class OptionSheet {
 	static readonly numColumns = 8;
 	static readonly metaDataKey = "42";
 
-	constructor(private symbol: string, private type: optionType, private optionDates, public sheet?: GoogleAppsScript.Spreadsheet.Sheet) {
+	constructor(private symbol: string, private type: optionType, private optionDates, private strikeCount: number, public sheet?: GoogleAppsScript.Spreadsheet.Sheet) {
 
 		if (sheet) // constructing from existing sheet
 			return;
-		const ss = SpreadsheetApp.getActive();
+		const ss = SpreadsheetApp.getActive()
+
 		const sheetName = `${symbol}-${type}(${Utilities.formatDate(new Date(), "GMT-8", "yyyy_MM_dd")})`;  // "GMT-8", "yyyy-MM-dd'T'HH:mm:ss"
 		this.sheet = ss.getSheetByName(sheetName);
 		if (!this.sheet) {
@@ -59,7 +60,12 @@ class OptionSheet {
 			this.sheet.getRange(OptionSheet.rowStartData, OptionSheet.columnStartData, this.sheet.getMaxRows(), OptionSheet.numColumns).clearFormat()
 		}
 		this.sheet.getRange(OptionSheet.symbolCell).setValue(symbol);
-		this.sheet.addDeveloperMetadata(OptionSheet.metaDataKey, JSON.stringify({ symbol, type, optionDates }));
+		const allMetadata = this.sheet.getDeveloperMetadata()
+		for (const md of allMetadata) {
+			//log(`removing metadata ${md.getValue()}`)
+			md.remove()
+		}
+		this.sheet.addDeveloperMetadata(OptionSheet.metaDataKey, JSON.stringify({ symbol, type, optionDates, strikeCount }));
 		this.writeValues();
 	}
 
@@ -67,7 +73,7 @@ class OptionSheet {
 		const metaData = sheet.getDeveloperMetadata().find(dmd => dmd.getKey() === this.metaDataKey);
 		if (metaData) {
 			const data = JSON.parse(metaData.getValue());
-			return new OptionSheet(data.symbol, data.type, data.optionDates, sheet);
+			return new OptionSheet(data.symbol, data.type, data.optionDates, data.strikeCount, sheet);
 		}
 		return null;
 	}
@@ -75,7 +81,7 @@ class OptionSheet {
 	writeValues() {
 		const startTime = new Date();
 
-		const oChain = tdApi.getOptionChain(this.symbol, this.type);
+		const oChain = tdApi.getOptionChain(this.symbol, this.type, this.strikeCount);
 		const expDates = (this.type === optionType.put) ? oChain.putExpDateMap : oChain.callExpDateMap;
 		this.sheet.getRange(OptionSheet.underlyingLastCell).setValue(oChain.underlyingPrice);
 		let values = [];
@@ -84,7 +90,7 @@ class OptionSheet {
 		// Quote Time in Long last quote time in milliseconds since Epoch -The Unix epoch (or Unix time or POSIX time or Unix timestamp) is the number of seconds that have elapsed since January 1, 1970 (midnight UTC/GMT)
 		// 	Math.floor(new Date().getTime()/1000.0) getTime() returns time in milliseconds.
 		for (const date of this.optionDates) {
-			const dateKey = Object.keys(expDates).find(el => el.slice(0, 10).localeCompare(date.slice(0, 10)) === 0);  
+			const dateKey = Object.keys(expDates).find(el => el.slice(0, 10).localeCompare(date.slice(0, 10)) === 0);
 			if (!dateKey) {
 				values.push(['', `expiration date ${date} not found`, '', '', '', '', '', '',]);
 				rowsToFormat.push(iRow++);
@@ -93,7 +99,8 @@ class OptionSheet {
 				values.push(['', date, '', '', '', '', '', '',]);
 				rowsToFormat.push(iRow++);
 				// var addedDate = sheet.getRange(1,1).getValue();
-				  // var addedTime = Utilities.formatDate(addedDate, SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "hh:mm a");  "GMT-8"
+				// var addedTime = Utilities.formatDate(addedDate, SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "hh:mm a");  "GMT-8"
+
 				const tz = SpreadsheetApp.getActive().getSpreadsheetTimeZone()
 				//log(`------ writeValues timezone for ss ${SpreadsheetApp.getActive()} is  ${tz? tz:"null"}`)
 				const data = Object.entries(expDates[dateKey]).map(([strike, value]) => [strike, Utilities.formatDate(new Date(value[0].quoteTimeInLong), tz, "MMM-dd' 'HH:mm:ss"), value[0].last, value[0].markChange, value[0].bid, value[0].ask, value[0].totalVolume, value[0].openInterest]);

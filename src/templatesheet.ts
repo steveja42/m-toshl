@@ -32,7 +32,7 @@ function makeTemplate(type: optionType, sheetName) {
 }
 
 function makeTemplateSheet(template, sheetName) {
-	const ss = SpreadsheetApp.getActive();
+	const ss = SpreadsheetApp.getActive()
 	const sheet = ss.insertSheet()
 	sheet.setName(sheetName);
 	const regex1 = /[-()]/g;

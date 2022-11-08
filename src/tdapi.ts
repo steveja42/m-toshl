@@ -13,15 +13,16 @@ const tdApi = {
 
 	},
 
-	getOptionChain(symbol, contractType) {
-		const url = `https://api.tdameritrade.com/v1/marketdata/chains?symbol=${symbol}&contractType=${contractType}&includeQuotes=TRUE&strikeCount=40`
+	getOptionChain(symbol, contractType, strikeCount = 0) {
+		const strikeCountString = (strikeCount > 0) ? `&strikeCount=${strikeCount}` : ''
+		const url = `https://api.tdameritrade.com/v1/marketdata/chains?symbol=${symbol}&contractType=${contractType}&includeQuotes=TRUE${strikeCountString}`
 		return td.callTDAPI(url);
 	},
 
 	getOptionDates(symbol) {
 		const url = `https://api.tdameritrade.com/v1/marketdata/chains?symbol=${symbol}&contractType=PUT&strikeCount=1`
 		const result = td.callTDAPI(url);
-		if (! result || result.status === 'FAILED')
+		if (!result || result.status === 'FAILED')
 			return null;
 		let optionDates = Object.keys(result.putExpDateMap);
 		optionDates = optionDates.map(key => key.slice(0, key.indexOf(':')));

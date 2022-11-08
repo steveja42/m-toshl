@@ -11,5 +11,8 @@
 	},
 	"scripts": {
 		"lint": "eslint -c .eslintrc.js --ext .ts src"
+	},
+	"dependencies": {
+		"@types/google-apps-script": "^1.0.56"
 	}
 }

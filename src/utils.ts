@@ -22,9 +22,17 @@ function getFunctionName() {
   } catch (error) {
 
     // The calling function we're interested in is up a few levels
-    functionName = error.stack.split('\n')[2].replace('at', '');
+    functionName = error.stack.split('\n ')[3].replace(/^\s*at\s*/,'');
   }
   return functionName
+}
+
+function toCode(str) {
+  let hex = '';
+  for(let i=0;i<str.length;i++) {
+      hex += '.'+str.charCodeAt(i)//.toString(16);
+  }
+  return hex;
 }
 
 function alert(msg) {

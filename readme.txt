@@ -1,13 +1,26 @@
+Setup
+1. pnpm add -g @google/clasp
+2. clasp clone <script id>
+3. pnpm add -d @types/google-apps-script
+4. make .claspignore
+  	jsconfig.json
+	**/node_modules/**
+5. clasp push --watch
+
 Test
- 1. go to https://script.google.com/home/projects/1cK_5DahOhYaomdxQ_xn9WvWoD1noKykrQCa-x9IVgVwHgIvlN9FxHl27/edit
+ 1. go to script editor: https://script.google.com/home/projects/1cK_5DahOhYaomdxQ_xn9WvWoD1noKykrQCa-x9IVgVwHgIvlN9FxHl27/edit
  2. deploy-> test deployments-> execute
  
 Publish
-1. Create new deployment version
+1. Create new deployment version deploy->new deployment
 2. go to https://console.cloud.google.com/apis/api/appsmarket-component.googleapis.com/googleapps_sdk?project=project-id-7012436840793518902&authuser=0
 3. update version number
 
-
+Measure
+1. go to logs explorer https://console.cloud.google.com/logs/query;query=severity%3DDEBUG;timeRange=2022-10-09T04:58:44.311Z%2F2022-11-07T05:58:44.311Z;cursorTimestamp=2022-11-07T01:27:30.763Z?project=project-id-7012436840793518902
+https://console.cloud.google.com/logs/query;query=severity%20%3D%22debug%22%0D%0Atimestamp%20%3E%3D%20%222022-10-06%22%20timestamp%20%3C%3D%20%222022-11-08%22%20;timeRange=2022-10-07T04:58:44.311Z%2F2022-11-07T05:58:44.311Z;cursorTimestamp=2022-11-07T01:27:30.763Z?project=project-id-7012436840793518902
+2. Download logs to csv and put in a google sheet
+3. use pivot tables to measure users and sheets made
 
 todo:
 log spreadsheet name in makesheet
@@ -16,13 +29,6 @@ get verified by google- ip
 add feedback link-   https://resultify.live/optionswhatif/feedback
 
 
-npm install -g @google/clasp
-clasp clone <script id>
-npm install --save @types/google-apps-script
-make .claspignore
-  	jsconfig.json
-	**/node_modules/**
-clasp push --watch
 
  style="width: 150px;"
 issues:
