@@ -2,7 +2,7 @@
 let userId = Session.getTemporaryActiveUserKey() || null;
 if (userId)
   userId = '...' + userId.slice(-10);
-const userEmail = Session.getEffectiveUser().getEmail()
+const userEmail = "" // Session.getEffectiveUser().getEmail()
 
 function log(x) {
   const now = new Date();

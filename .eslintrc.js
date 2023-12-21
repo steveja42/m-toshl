@@ -35,7 +35,9 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": { 
-        "@typescript-eslint/no-unused-vars":"off"
+        "@typescript-eslint/no-unused-vars":"off",
+        "@typescript-eslint/no-namespace":"off", /*google appscript doesn't support modules */
+        "no-inner-declarations":"off"
     }
        
 };

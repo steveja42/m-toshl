@@ -1,8 +1,18 @@
 // functions for testing/debugging by running in the script editor debugger:  https://script.google.com/home/projects/1cK_5DahOhYaomdxQ_xn9WvWoD1noKykrQCa-x9IVgVwHgIvlN9FxHl27/edit
 
-function test4() {
-  log ("foo")
+function test5() {
+  
+    const foo = toshl.getAccounts("C")
+    log(foo);
+    
 }
+function test4() {
+  
+    const foo = tdApi.getOptionDates("C")
+    log(foo);
+    
+}
+
 
 function test3() {
   // have to add "https://www.googleapis.com/auth/spreadsheets" to oauthScopes in appscript.json for openById to work

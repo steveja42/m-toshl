@@ -1,4 +1,4 @@
-
+.
 enum optionType {
 	put = "PUT",
 	call = "CALL"
@@ -29,7 +29,6 @@ function refreshPrices() {
 	}
 	else {
 		throw new Error(`Current tab is not an options sheet`)
-
 	}
 }
 

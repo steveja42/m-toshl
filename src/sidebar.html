@@ -45,52 +45,32 @@
 	<div class="sidebar branding-below">
 		<form>
 			<div class="block">
-				<label for="symbol">Enter a stock symbol</label>
-				<input type="text" id="symbol" autofocus spellcheck="false">
-			</div>
-			<div class="block">
-				<label for="optionType">Select the option type</label>
-				<select id="optionType" size="2">
-					<option selected>PUT</option>
-					<option>CALL</option>
-				</select>
+				<label for="token">Enter a token</label>
+				<input type="text" id="token" autofocus spellcheck="false">
 			</div>
 
 			<div class="block">
-				<label for="strikeCount">Strikes</label>
-				<select id="strikeCount" value="40">
-					<option value=0>All</option>
-					<option value=1>1</option>
-					<option value=5>5</option>
-					<option value=10>10</option>
-					<option value=15>15</option>
-					<option value=20>20</option>
-					<option value=30>30</option>
-					<option value=40 selected>40</option>
+				<label for="accounts">Select desired accounts (ctrl + click)</label>
+				<select id="accounts">
 				</select>
 			</div>
 			<div class="block">
-				<label for="dates">Select desired option dates (ctrl + click)</label>
-				<select id="dates" multiple size="10">
-				</select>
+				<label for="token">Enter cell address</label>
+				<input type="text" id="celladdress" spellcheck="false">
 			</div>
-			<button class="blue" type=submit id="createsheet">Make options sheet</button>
+			<button class="blue" type=submit id="addtosheet">Add to sheet</button>
 		</form>
 		<p>---------------</p>
-		<button class="blue" id="updatePrices">Update prices</button>
+		<button class="blue" id="updatedata">Update data</button>
 
 		<div id="errorplace"></div>
 		<p></p>
-		<p><a href="https://optionswhatif.com/feedback" target="_blank">Give feedback</a> (Bug reports/Feature
-			requests/Contributions)</p>
+		
 	</div>
 
 	<div class="sidebar bottom">
-		<img alt="Add-on logo" class="logo"
-			src="http://d2f0ora2gkri0g.cloudfront.net/5f/ab/5fabf7e1-f53e-4163-802d-0bac8d0123cb.png" width="27"
-			height="27">
-
-		<span class="gray branding-text">OptionsWhatif by steveja </span>
+		
+		<span class="gray branding-text">Add Toshl Accounts to sheet</span>
 	</div>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -99,84 +79,99 @@
 		 * On load, assign click handlers to each button 
 		 */
 		$(function () {
-			$('#createsheet').click(runCreateSheet);
-			$('#updatePrices').click(runrefreshPrices);
-			$('#symbol').change(runSymbolChanged);
-			document.querySelector("#symbol").addEventListener("keyup", event => {
+			$('#addtosheet').click(runAddToSheet);
+			$('#updatedata').click(runrefreshData);
+			$('#token').change(runTokenChanged);
+			document.querySelector("#token").addEventListener("keyup", event => {
 				if (event.key !== "Enter") return;
-				runSymbolChanged()
+				runTokenChanged()
 				event.preventDefault(); // No need to `return false;`.
 			});
 		});
 
-		function runrefreshPrices() {
+		function runrefreshData() {
 			this.disabled = true;
 
 			$('#error').remove()
 			google.script.run
-				.withSuccessHandler((x, element) => element.disabled = false)
+				.withSuccessHandler((ret, element) => element.disabled = false)
 				.withFailureHandler((msg, element) => {
-					showError(msg, $('#errorplace'))
+					showError(msg)
 					element.disabled = false
 				})
 				.withUserObject(this)
-				.refreshPrices()
+				.DataSheet.syncData()
 		}
 
-		function runSymbolChanged() {
-
+		function runTokenChanged() {
+			console.log($('#token').val())
 			$('#error').remove()
-			$('#dates').empty()
-			if ($('#symbol').val() == "")
+			$('#accounts').empty()
+			if ($('#token').val() == "")
 				return false
 			google.script.run
 				.withSuccessHandler(
 					function (values) {
+						console.log(values)
 						$.each(values, function (index, value) {
-							$('#dates')
+							console.log(value)
+							let [bankName, bankId] = value
+							console.log($("<option></option>")
+								.attr("value", bankId)
+								.text(bankName));
+
+							$('#accounts')
 								.append($("<option></option>")
-									.attr("value", value)
-									.text(value));
+									.attr("value", bankId)
+									.text(bankName));
 						});
 					})
 				.withFailureHandler(
 					function (msg, element) {
-						showError(msg, $('#errorplace'));
+						showError(msg);
 					})
 				.withUserObject(this)
-				.getOptionDates($('#symbol').val());
+				.getAccounts($('#token').val());
 		}
 
 		/**
-				* Runs a server-side function to create the data sheet
+				* Runs a server-side function to add data to the data sheet
 				*/
-		function runCreateSheet() {
-			if ($('#symbol').is(":focus")) {
+		function runAddToSheet() {
+			$('#error').remove();
+			if ($('#token').is(":focus")) {
+				return false
+			}
+			let cellAddress = $('#celladdress').val()
+			console.log(cellAddress)
+
+			if ( !cellAddress) {
+				showError("Cell Address Required")
 				return false
 			}
 			this.disabled = true;
-			$('#updatePrices').prop("disabled", true)
+			$('#updatedata').prop("disabled", true)
 
-			$('#error').remove();
 
-			var symbol = $('#symbol').val();
-			var dates = $('#dates').val();
-			var optionType = $('#optionType').val();
-			var strikeCount = $('#strikeCount').val()
+			let accountId = $('#accounts').val();
+			
 			google.script.run
 				.withSuccessHandler(
 					function (x, element) {
 						element.disabled = false;
-						$('#updatePrices').prop("disabled", false)
+						$('#updatedata').prop("disabled", false)
 					})
 				.withFailureHandler(
 					function (msg, element) {
-						showError(msg, $('#errorplace'));
+						console.log(msg)
+						console.log("fail")
+
+						showError(msg);
 						element.disabled = false;
-						$('#updatePrices').prop("disabled", false)
+						$('#updatedata').prop("disabled", false)
 					})
 				.withUserObject(this)
-				.makeSheet(symbol, optionType, dates, strikeCount);
+				.addToSheet(accountId, cellAddress)
 		}
 
 		/**
@@ -187,7 +182,7 @@
 				*/
 		function showError(msg, element) {
 			var div = $('<div id="error" class="error">' + msg + '</div>');
-			$(element).after(div);
+			$('#errorplace').after(div);
 		}
 	</script>
 </body>

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /** @OnlyCurrentDoc */
 
-const version = 36;
-const appTitle = 'OptionsWhatIf'
+const version = 1;
+const appTitle = 'm-toshl'
 
 /**
  * Creates a menu entry in the Google Spreadsheet UI when the sheet is opened.
@@ -44,42 +44,33 @@ function showSidebar() {
 
 
 /**
- * Called by the sidebar to make a new option sheet
+ * Called by the sidebar to add toshl data to a sheet
  *
  */
-function makeSheet(symbol, optionType, optionDates,strikeCount) {
+function addToSheet(bankId:string, cellAddress:string) {
+  log(`addToSheet-start ${bankId} ->  `)
 
-  //log(`makeSheet-start ${symbol} : ${optionType} : ${optionDates} ${strikeCount} foo ${strikeCount >0}`)
+  if (!bankId)
+    throw new Error(`No Bank ID`)
+  if (!cellAddress )
+    throw new Error(`No Cell Address`)
 
-  if (!symbol)
-    throw new Error(`Symbol not entered`)
-  if (!optionDates || optionDates.length < 1)
-    throw new Error(`Choose at least one option expiration date.`)
-  const startTime = new Date();
-  const os = new OptionSheet(symbol.toUpperCase() as string, optionType as optionType, optionDates,strikeCount);
-  SpreadsheetApp.setActiveSheet(os.sheet)
-  const userProperties = PropertiesService.getUserProperties()
-  let sheetsMadeCount = Number(userProperties.getProperty('sheetsMadeCount'))
-  if (sheetsMadeCount) {
-    sheetsMadeCount = sheetsMadeCount + 1
-  }
-  else
-    sheetsMadeCount = 1
-  log(`---🚀 made sheet # ${sheetsMadeCount} (in ${(new Date()).getTime() - startTime.getTime()} msecs) ${symbol} : ${optionType} : ${optionDates} ${strikeCount}`)
-  userProperties.setProperty('sheetsMadeCount', sheetsMadeCount.toString())
+   const [bankName, bankBalance] =toshl.getAccount(bankId)
+  log(`addToSheet-start ${bankId} ->  ${bankName} ${bankBalance} at ${cellAddress} `)
+  DataSheet.addData(bankId,cellAddress,bankName,bankBalance)
 }
 
 /**
  * Called by the sidebar to get the option expiration dates for a stock symbol
  *
  */
-function getOptionDates(symbol) {
-  const dates = tdApi.getOptionDates(symbol.toUpperCase());
-  if (!dates) {
-    throw new Error(`Option Chain not found for symbol: ${symbol}`)
+function getAccounts(token) {
+  const accounts = toshl.getAccounts(token)
+  if (!accounts) {
+    throw new Error(`Accounts not found for token: ${token}`)
   }
   // log(dates);
-  return dates;
+  return accounts;
 }
 
 
@@ -95,7 +86,7 @@ function getOptionDates(symbol) {
  *     AuthMode.NONE.)
  */
 function onInstall(e) {
-  log(`on install version ${version}`);
+  log(`🌏 on install version ${version} in timezone ${SpreadsheetApp.getActive()?.getSpreadsheetTimeZone()}`);
   onOpen(e);
 }
 
