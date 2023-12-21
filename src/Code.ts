@@ -18,11 +18,9 @@ function onOpen(e) {
   let ssName = '';
   if (e.authMode !== ScriptApp.AuthMode.NONE)
     ssName = SpreadsheetApp.getActive().getName()
-  // log(`on open version ${version} authmode ${e.authMode} : ${ssName}`);
 
   SpreadsheetApp.getUi().createAddonMenu()
     .addItem('Start', 'showSidebar')
-    // .addItem('TEST', 'test')
     .addToUi();
 
 
@@ -38,7 +36,6 @@ function onOpen(e) {
 function showSidebar() {
   const ui = HtmlService.createHtmlOutputFromFile('sidebar')
     .setTitle(appTitle);
-
   SpreadsheetApp.getUi().showSidebar(ui);
 }
 
@@ -47,17 +44,15 @@ function showSidebar() {
  * Called by the sidebar to add toshl data to a sheet
  *
  */
-function addToSheet(bankId:string, cellAddress:string) {
-  log(`addToSheet-start ${bankId} ->  `)
+function addToSheet(bankId: string, cellAddress: string) {
 
   if (!bankId)
     throw new Error(`No Bank ID`)
-  if (!cellAddress )
+  if (!cellAddress)
     throw new Error(`No Cell Address`)
 
-   const [bankName, bankBalance] =toshl.getAccount(bankId)
-  log(`addToSheet-start ${bankId} ->  ${bankName} ${bankBalance} at ${cellAddress} `)
-  DataSheet.addData(bankId,cellAddress,bankName,bankBalance)
+  const [bankName, bankBalance] = toshl.getAccount(bankId)
+  DataSheet.addData(bankId, cellAddress, bankName, bankBalance)
 }
 
 /**
@@ -69,7 +64,6 @@ function getAccounts(token) {
   if (!accounts) {
     throw new Error(`Accounts not found for token: ${token}`)
   }
-  // log(dates);
   return accounts;
 }
 
@@ -86,7 +80,6 @@ function getAccounts(token) {
  *     AuthMode.NONE.)
  */
 function onInstall(e) {
-  log(`🌏 on install version ${version} in timezone ${SpreadsheetApp.getActive()?.getSpreadsheetTimeZone()}`);
   onOpen(e);
 }
 
